@@ -1,3 +1,16 @@
+-- QUESTION 1
+
+    -- run command "docker build --help"
+
+            --iidfile string 
+
+-- QUESTION 1
+
+    -- run command "docker run -it --entrypoint=bash python:3.9"
+    -- in the container bash run "pip list"
+    -- count the modules/packages
+
+            -- 3
 
 --QUESTION 3
 SELECT

@@ -35,6 +35,7 @@
 
     url="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz"
     url="https://d37ci6vzurychx.cloudfront.net/misc/taxi+_zone_lookup.csv"
+    url="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-01.csv.gz"
 
     python3 ingest_data.py \
         --user=root \
@@ -48,7 +49,7 @@
 
     docker build -t taxi_ingest:v001 .
 
-    docker run -it --network=pg-network taxi_ingest:v001 --user=root --passwd=root --host=pg-database --port=5432 --db=ny_taxi --table_name=yellow_taxi_trips --url=${url}
+    docker run -it --network=data-engineering-zoomcamp_default taxi_ingest:v001 --user=root --passwd=root --host=pg-database --port=5432 --db=ny_taxi --table_name=yellow_taxi_trips --url=${url}
 
 https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 https://www1.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf
