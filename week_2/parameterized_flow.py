@@ -6,22 +6,15 @@ import argparse
 from prefect.tasks import task_input_hash
 from datetime import timedelta
 
-@task(retries=3,cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
+@task(retries=3,log_prints=True)
 def fetch(url: str) -> pd.DataFrame:
     '''Read taxi data from web into pandas DF'''
-
+    print(type(url))
     df = pd.read_csv(url)
+    
+    print(type(df))
     return df
 
-
-@task(log_prints=True)
-def clean(df: pd.DataFrame) -> pd.DataFrame:
-    '''Fix dtype issues'''
-
-    df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
-    df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-
-    return df
 
 @task()
 def write_local(df: pd.DataFrame, color: str, dataset_file: str) -> Path:
@@ -53,13 +46,11 @@ def etl_web_to_gcs(year: int, month:int, color: str) -> None:
 
     df = fetch(url)
 
-    df_clean = clean(df)
-
-    path = write_local(df_clean, color, dataset_file)
+    path = write_local(df, color, dataset_file)
     write_gcs(path)
 
 @flow()
-def etl_parent_flow(months: list[int] = [1,2], year : int = 2021, color: str = 'yellow'):
+def etl_parent_flow(months: list[int] = [1,2], year : int = 2021, color: str = "yellow"):
     for month in months:
         etl_web_to_gcs(year,month,color)
 
@@ -73,4 +64,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    etl_parent_flow()
+    etl_parent_flow(args.months,args.year,args.color)

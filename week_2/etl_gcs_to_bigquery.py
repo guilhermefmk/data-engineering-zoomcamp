@@ -15,18 +15,10 @@ def extract_from_gcs(color: str,year: int,month: int) -> Path:
 
     return Path(f"{local_path}/{gcs_path}")
 
-@task()
-def transform(data: Path) -> pd.DataFrame:
+@task(log_prints=True)
+def fetch(data: Path) -> pd.DataFrame:
     '''Data cleaning example'''
     df = pd.read_parquet(data)
-    total = len(df.index)
-    na_passageiros = df['passenger_count'].isna().sum()
-
-    print(f"pre: o total de linhas com passageiros nulos é {na_passageiros}")
-    
-    df["passenger_count"].fillna(0, inplace=True)
-    na_passageiros = df['passenger_count'].isna().sum()
-    print(f"pre: após a limpeza o dataframe ficou com {na_passageiros} linhas com valores nulos na coluna passageiros")
     return df
 
 @task()
@@ -43,16 +35,18 @@ def write_bq(df: pd.DataFrame) -> None:
 
 
 
-@flow()
-def etl_gcs_to_bq():
+@flow(log_prints=True)
+def etl_gcs_to_bq(year,month,color):
     '''Main ETL flow to load data into Big Query(datawarehouse)'''
-    color = "yellow"
-    year = 2021
-    month = 1
-
     path = extract_from_gcs(color, year,month)
-    df = transform(path)
+    df = fetch(path)
+    print(len(df.sort_index))
     write_bq(df)
 
+@flow()
+def etl_sub_flow(months: list[int], year : int, color: str):
+    for month in months:
+        etl_gcs_to_bq(year,month,color)
+
 if __name__ == "__main__":
-    etl_gcs_to_bq()
+    etl_sub_flow()

@@ -1,0 +1,54 @@
+###
+### A complete description of a Prefect Deployment for flow 'etl-sub-flow'
+###
+name: Homework_week2
+description: null
+version: 29f5d28e214b34da97dcfa6641411a8f
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+tags: []
+parameters: {"color": "yellow", "months": [2,3], year: 2019}
+schedule: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  block_type_slug: process
+  _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: etl-sub-flow
+manifest_path: null
+storage: null
+path: "/home/guilhermefmk/\xC1rea de Trabalho/workspace/data-engineering-zoomcamp/week_2"
+entrypoint: etl_gcs_to_bigquery.py:etl_sub_flow
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    months:
+      title: months
+      position: 0
+      type: array
+      items:
+        type: integer
+    year:
+      title: year
+      position: 1
+      type: integer
+    color:
+      title: color
+      position: 2
+      type: string
+  required:
+  - months
+  - year
+  - color
+  definitions: null
