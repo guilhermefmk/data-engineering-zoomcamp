@@ -3,24 +3,15 @@ import pandas as pd
 from prefect import flow, task
 from prefect_gcp.cloud_storage import GcsBucket
 import argparse
-import os
+from prefect.tasks import task_input_hash
+from datetime import timedelta
 
-@task(retries=3)
+@task(retries=3,log_prints=True)
 def fetch(url: str) -> pd.DataFrame:
     '''Read taxi data from web into pandas DF'''
-
     df = pd.read_csv(url)
     return df
 
-
-@task(log_prints=True)
-def clean(df: pd.DataFrame) -> pd.DataFrame:
-    '''Fix dtype issues'''
-
-    df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
-    df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-
-    return df
 
 @task()
 def write_local(df: pd.DataFrame, color: str, dataset_file: str) -> Path:
@@ -45,20 +36,33 @@ def write_gcs(path: Path) -> None:
 
 
 @flow()
-def etl_web_to_gcs() -> None:
+def etl_web_to_gcs(year: int, month:int, color: str) -> pd.DataFrame:
     ''' Main ETL funtion '''
-    color = "yellow"
-    year = 2021
-    month = 1
     dataset_file = f"{color}_tripdata_{year}-{month:02}"
     url = f"https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{color}/{dataset_file}.csv.gz"
 
     df = fetch(url)
 
-    df_clean = clean(df)
-
-    path = write_local(df_clean, color, dataset_file)
+    path = write_local(df, color, dataset_file)
     write_gcs(path)
+    return df
+
+@flow(log_prints=True)
+def etl_parent_flow(months: list[int] = [1,2], year : int = 2021, color: str = "yellow"):
+    count_rows = 0
+    for month in months:
+        df = etl_web_to_gcs(year,month,color)
+        count_rows += len(df.index)
+    print(count_rows)
+
 
 if __name__ == '__main__':
-    etl_web_to_gcs()
+    parser = argparse.ArgumentParser(description='Ingest data from web to gcs')
+
+    parser.add_argument('--year', help='year of csv')
+    parser.add_argument('--months', nargs="+",help='month of csv')
+    parser.add_argument('--color', help='color of dataset')
+
+    args = parser.parse_args()
+
+    etl_parent_flow(args.months,args.year,args.color)

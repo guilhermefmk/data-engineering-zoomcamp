@@ -36,17 +36,23 @@ def write_bq(df: pd.DataFrame) -> None:
 
 
 @flow(log_prints=True)
-def etl_gcs_to_bq(year,month,color):
+def etl_gcs_to_bq(year,month,color) -> pd.DataFrame:
     '''Main ETL flow to load data into Big Query(datawarehouse)'''
     path = extract_from_gcs(color, year,month)
     df = fetch(path)
-    print(len(df.sort_index))
     write_bq(df)
+    return df
 
 @flow()
-def etl_sub_flow(months: list[int], year : int, color: str):
+def etl_sub_flow(months: list[int] = [2,3], year : int = 2019, color: str = 'yellow'):
+    count_rows = 0
     for month in months:
         etl_gcs_to_bq(year,month,color)
+        count_rows += len(df.index)
+    print(count_rows)
 
 if __name__ == "__main__":
-    etl_sub_flow()
+    color = "yellow"
+    months = [1, 2, 3]
+    year = 2021
+    etl_sub_flow(months,year,color)
