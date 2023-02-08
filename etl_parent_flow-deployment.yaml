@@ -1,0 +1,71 @@
+###
+### A complete description of a Prefect Deployment for flow 'etl-parent-flow'
+###
+name: ex4
+description: cloud
+version: 75998a50d1c6d3bb13bd15be8a6ec955
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+tags: []
+parameters:
+  year: 2019
+  color: green
+  months:
+  - 4
+schedule: null
+infra_overrides: {}
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: etl-parent-flow
+manifest_path: null
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  _block_document_id: 475d383f-91d1-44bf-a2f3-383730ccbfb9
+  _block_document_name: anonymous-0f129487-5bd9-43c6-9787-851c0d5dbe92
+  _is_anonymous: true
+  block_type_slug: process
+  _block_type_slug: process
+storage:
+  repository: https://github.com/guilhermefmk/data-engineering-zoomcamp.git
+  reference: null
+  access_token: '**********'
+  _block_document_id: 2e89d943-be93-489c-add8-422a2f0c14a8
+  _block_document_name: git-zoom
+  _is_anonymous: false
+  block_type_slug: github
+  _block_type_slug: github
+path: ''
+entrypoint: week_2\etl_web_to_gcs.py:etl_parent_flow
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    months:
+      title: months
+      default:
+      - 1
+      - 2
+      position: 0
+      type: array
+      items:
+        type: integer
+    year:
+      title: year
+      default: 2021
+      position: 1
+      type: integer
+    color:
+      title: color
+      default: yellow
+      position: 2
+      type: string
+  required: null
+  definitions: null
