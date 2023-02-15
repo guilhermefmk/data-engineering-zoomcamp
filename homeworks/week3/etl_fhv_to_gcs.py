@@ -16,16 +16,17 @@ def fetch(url: str) -> pd.DataFrame:
 @task(retries=3,log_prints=True)
 def transform(df: pd.DataFrame) -> pd.DataFrame:
     '''Read taxi data from web into pandas DF'''
-    df["passenger_count"].fillna(0, inplace=True)
-    df["passenger_count"] = df["passenger_count"].astype(int)
-    
+    df["pickup_datetime"] = pd.to_datetime(df["pickup_datetime"])
+    df["dropOff_datetime"] = pd.to_datetime(df["dropOff_datetime"])
+    df['PUlocationID'] = df['PUlocationID'].astype('Int64')
+    df['DOlocationID'] = df['DOlocationID'].astype('Int64')
     return df
 
 @task()
-def write_local(df: pd.DataFrame, color: str, dataset_file: str) -> str:
+def write_local(df: pd.DataFrame, dataset_file: str) -> str:
     '''Write DataFrame out locally as parquet file'''
     folder_path = 'data_flow'
-    dir_path = os.path.join(folder_path, color)
+    dir_path = os.path.join(folder_path, 'fhv')
     path = os.path.join(dir_path, dataset_file + '.parquet')
 
 
@@ -48,22 +49,23 @@ def write_gcs(path: Path) -> None:
 
 
 @flow()
-def etl_web_to_gcs(year: int, month:int, color: str) -> pd.DataFrame:
+def etl_web_to_gcs(year: int, month:int) -> pd.DataFrame:
     ''' Main ETL funtion '''
-    dataset_file = f"{color}_tripdata_{year}-{month:02}"
-    url = f"https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{color}/{dataset_file}.csv.gz"
+    dataset_file = f"fhv_tripdata_{year}-{month:02}"
+    url = f"https://github.com/DataTalksClub/nyc-tlc-data/releases/download/fhv/{dataset_file}.csv.gz"
+
 
     df = fetch(url)
     df_clean = transform(df)
-    path = write_local(df_clean, color, dataset_file)
+    path = write_local(df_clean, dataset_file)
     write_gcs(path)
     return df
 
 @flow(log_prints=True)
-def etl_parent_flow(months: list[int] = [1,2], year : int = 2021, color: str = "yellow"):
+def etl_fhv_flow(months: list[int] = [1,2,3,4,5,6,7,8,9,10,11,12], year : int = 2019):
     count_rows = 0
     for month in months:
-        df = etl_web_to_gcs(year,month,color)
+        df = etl_web_to_gcs(year,month)
         count_rows += len(df.index)
     print(count_rows)
 
