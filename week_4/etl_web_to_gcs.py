@@ -18,11 +18,19 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
     '''Read taxi data from web into pandas DF'''
     df["passenger_count"].fillna(0, inplace=True)
     df["passenger_count"] = df["passenger_count"].astype(int)
+    df["payment_type"].fillna(5, inplace=True)
+    df["payment_type"] = df["payment_type"].astype(int)
+    df["RatecodeID"].fillna(1, inplace=True)
+    df["RatecodeID"] = df["RatecodeID"].astype(int)
+    df["VendorID"].fillna(0, inplace=True)
+    df["VendorID"] = df["VendorID"].astype(int)
     # tpep for yellow and lpep for green
     if 'tpep_pickup_datetime' in df.columns:
         df["tpep_pickup_datetime"] = pd.to_datetime(df["tpep_pickup_datetime"])
         df["tpep_dropoff_datetime"] = pd.to_datetime(df["tpep_dropoff_datetime"])
     elif 'lpep_pickup_datetime' in df.columns:
+        df["trip_type"].fillna(0, inplace=True)
+        df["trip_type"] = df["trip_type"].astype(int)
         df["lpep_pickup_datetime"] = pd.to_datetime(df["lpep_pickup_datetime"])
         df["lpep_dropoff_datetime"] = pd.to_datetime(df["lpep_dropoff_datetime"])
     return df

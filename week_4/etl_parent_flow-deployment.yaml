@@ -1,14 +1,16 @@
 ###
 ### A complete description of a Prefect Deployment for flow 'etl-parent-flow'
 ###
-name: green_yellow
+name: web_to_gcs
 description: null
-version: 2c34441b66f2b894ec880840e8c8d666
+version: e51e6f511cfb7af82d3b32ce86f82bda
 # The work queue that will handle this deployment's runs
 work_queue_name: default
+work_pool_name: default-agent-pool
 tags: []
 parameters: {}
 schedule: null
+is_schedule_active: true
 infra_overrides: {}
 
 ###
@@ -24,13 +26,13 @@ infrastructure:
   command: null
   stream_output: true
   working_dir: null
-  _block_document_id: 313ef1a0-b347-44e9-be46-2b7035c5e4d6
-  _block_document_name: anonymous-e8e35bb1-b0c1-46b8-a69c-e5043bab70f8
+  _block_document_id: cadbd9de-8b9e-4169-8d76-66697f70fef9
+  _block_document_name: anonymous-381962fc-aef9-4e62-aa12-71e0e13492af
   _is_anonymous: true
   block_type_slug: process
   _block_type_slug: process
 storage: null
-path: C:\Users\Guilherme\Documents\WORKSPACE\data-engineering-zoomcamp\week_4
+path: /home/guilherme.cunha/WORKSPACE/data-engineering-zoomcamp/week_4
 entrypoint: etl_web_to_gcs.py:etl_parent_flow
 parameter_openapi_schema:
   title: Parameters
@@ -67,3 +69,4 @@ parameter_openapi_schema:
       type: string
   required: null
   definitions: null
+timestamp: '2023-03-09T16:26:55.659252+00:00'
