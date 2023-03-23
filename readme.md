@@ -2,8 +2,12 @@
 
 Este repositório contém todos os meus estudos e projetos realizados durante o Zoomcamp da DataTalks Club. O Zoomcamp é um curso online intensivo que fornece treinamento em habilidades práticas em ciência de dados e engenharia de dados. Durante o curso, aprendi as habilidades e ferramentas essenciais para a construção de soluções de dados do zero, desde a coleta e armazenamento de dados até a criação de modelos de aprendizado de máquina.
 
-[dbt repo](https://github.com/guilhermefmk/dbt_zoomcamp_project)
+## DBT
+Acesse [aqui](https://github.com/guilhermefmk/dbt_zoomcamp_project) o repositório dbt para este projeto
+
+## Arquitetura
 ![Projeto](/img/architeture.png)
+
 ## Tecnologias
 Durante o curso, trabalhei com uma série de tecnologias e ferramentas essenciais para a área de dados, incluindo:
 
