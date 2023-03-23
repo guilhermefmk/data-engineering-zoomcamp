@@ -5,5 +5,5 @@ StructType(
     StructField('dropoff_datetime', TimestampType(), True),
     StructField('PULocationID', IntegerType(), True),
     StructField('DOLocationID', IntegerType(), True),
-    StructField('SR_Flag', DoubleType(), True)
+    StructField('SR_Flag', StringType(), True)
 )
